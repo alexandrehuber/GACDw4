@@ -16,11 +16,11 @@ The present summary data was assembled by Alexandre Huber as an exercise for Joh
 
 ##Files
 
-- The original data set is included in the 'raw' subfolder which contains its own description files
+- Original data files as described in README.txt
 - 'README.md': present file.
 - 'CodeBook.md': Shows information about the variables used on the feature vector.
-- 'HumanActivityRecognition.csv': Means and standard deviations of all measurements associated with subject number, data subset (train / test) and activity.
-- 'HumanActivityRecognitionSummary.csv': Data summary by subject number, data subset and activity. The means were calculated for each of these groups from for all measurements in 'HumanActivityRecongition.csv". 
+- 'HumanActivityRecognition.txt': Means and standard deviations of all measurements associated with subject number, data subset (train / test) and activity.
+- 'HumanActivityRecognitionSummary.txt': Data summary by subject number, data subset and activity. The means were calculated for each of these groups from for all measurements in 'HumanActivityRecongition.csv". 
 - "run_analysis.R": R script file loading the raw data to compute the 3 preceding files.
 
 For more information about the raw dataset contact: activityrecognition@smartlab.ws

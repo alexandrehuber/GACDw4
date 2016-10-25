@@ -16,11 +16,11 @@ require(readr)
 #               - measurement variables
 read.dataset <- function(name, activity.labels, features) {
     
-    data <- read_fwf(paste0("raw/", name, "/X_", name, ".txt"),
+    data <- read_fwf(paste0(name, "/X_", name, ".txt"),
                      col_positions = fwf_widths(rep(16, 561), col_names = features))
-    subject <- read.csv(paste0("raw/", name, "/subject_", name, ".txt"),
+    subject <- read.csv(paste0(name, "/subject_", name, ".txt"),
                         as.is = T, header = F, col.names = "Subject")
-    activity <- tbl_df(read.csv(paste0("raw/", name, "/y_", name, ".txt"), 
+    activity <- tbl_df(read.csv(paste0(name, "/y_", name, ".txt"), 
                                 header = F, col.names = c("ID")))
     activity <- select(left_join(activity, activity.labels), Activity)
 
@@ -28,11 +28,15 @@ read.dataset <- function(name, activity.labels, features) {
     data
 }
 
+
+
 # Setting the working directory to the dataset path (unquote and adapt as needed)
 #setwd("Coursera\\GACDw4\\")
 
+
+
 # Loading and cleaning / capitalizing activity labels
-activity.labels <- read.csv("raw/activity_labels.txt", sep = " ", as.is = T,
+activity.labels <- read.csv("activity_labels.txt", sep = " ", as.is = T,
                             header = F, col.names = c("ID", "Activity"))
 activity.labels$Activity <- gsub("_", " ", activity.labels$Activity) %>%
     tolower() %>%
@@ -40,7 +44,7 @@ activity.labels$Activity <- gsub("_", " ", activity.labels$Activity) %>%
     factor()
 
 # Loading and cleaning / capitalizing feature names
-features <- read.csv("raw/features.txt", sep = " ", as.is = T, header = F)
+features <- read.csv("features.txt", sep = " ", as.is = T, header = F)
 features <- features$V2 %>%
     sub(pattern = "\\bt", replacement = "Time") %>%
     sub(pattern = "\\bf", replacement = "Frequency") %>%
@@ -61,6 +65,8 @@ features <- features$V2 %>%
     sub(pattern = "\\(\\)", replacement = "") %>%
     sub(pattern = "([[:digit:]]+),([[:digit:]]+)", replacement = "\\1To\\2") %>%
     gsub(pattern = "[(),-]", replacement = "")
+
+
 
 # Loading, naming and assembling the train dataset with the read.dataset function
 train <- read.dataset(name = "train", activity.labels = activity.labels, features = features)
@@ -83,10 +89,12 @@ means <- group_by(d, Subject, Activity) %>%
 
 write.table(means, file = "HumanActivityRecognitionSummary.txt", row.names = F)
 
+
+
 # Assembling the code book
 # Starting with the header
 cb <- c("#Code book",
-            "Please find below the names, types and descriptions of all variables used in the 'HumanActivityRecognition.csv' and 'HumanActivityRecognitionSummary.csv' files",
+            "Please find below the names, types and descriptions of all variables used in the 'HumanActivityRecognition.txt' and 'HumanActivityRecognitionSummary.txt' files",
             "##Variables")
 # Constructing the table of name, type and description for each variable
 v <- data.frame(names(d), stringsAsFactors = F)

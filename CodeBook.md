@@ -1,5 +1,5 @@
 #Code book
-Please find below the names, types and descriptions of all variables used in the 'HumanActivityRecognition.csv' and 'HumanActivityRecognitionSummary.csv' files
+Please find below the names, types and descriptions of all variables used in the 'HumanActivityRecognition.txt' and 'HumanActivityRecognitionSummary.txt' files
 ##Variables
 Name | Type | Description
 --- | --- | --- 
