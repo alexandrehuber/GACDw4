@@ -4,7 +4,6 @@ Please find below the names, types and descriptions of all variables used in the
 Name | Type | Description
 --- | --- | --- 
 Subject | Factor | Subject number
-Subset | Factor | Raw data subset (Test/Train)
 Activity | Factor | Physical activity (Laying/Sitting/Standing/Walking/Walking downstairs/Walking upstairs)
 TimeBodyAccelerationMeanX | Numeric | Mean of time-wise body acceleration in the X axis
 TimeBodyAccelerationMeanY | Numeric | Mean of time-wise body acceleration in the Y axis

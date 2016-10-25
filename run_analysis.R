@@ -1,6 +1,5 @@
 require(dplyr)
 require(readr)
-require(gdata)
 
 # The read.dataset function reads and assembles the data subset defined by the
 # name argument (which corresponds to the data subset folder and file names) and
@@ -12,18 +11,15 @@ require(gdata)
 #   Output: dplyr data table containing the data subset properly annotated
 #               with the following columns:
 #               - subject: test subject number
-#               - subset: subset name (= name argument)
 #               - activity: associated activity as defined by the
 #                    activity.labels variable
-#               - parameter variables
+#               - measurement variables
 read.dataset <- function(name, activity.labels, features) {
     
     data <- read_fwf(paste0("raw/", name, "/X_", name, ".txt"),
                      col_positions = fwf_widths(rep(16, 561), col_names = features))
     subject <- read.csv(paste0("raw/", name, "/subject_", name, ".txt"),
                         as.is = T, header = F, col.names = "Subject")
-    subset <- sub(pattern = "^(.)", replacement = "\\U\\1", tolower(name), perl = T)
-    subject$Subset <- rep(subset, length(subject$Subject))
     activity <- tbl_df(read.csv(paste0("raw/", name, "/y_", name, ".txt"), 
                                 header = F, col.names = c("ID")))
     activity <- select(left_join(activity, activity.labels), Activity)
@@ -73,22 +69,19 @@ test <- read.dataset(name = "test", activity.labels = activity.labels, features 
 
 # Fusing test and train datasets and conversion to dplyr data table
 d <- tbl_df(rbind(train, test))
-# Converting the Subject and Subset (train/test) columns to factors
+# Converting the Subject column to factors
 d$Subject <- factor(d$Subject)
-d$Subset <- factor(d$Subset)
 
 # Selecting only means and standard deviations in addition to factor variables
-d <- d[c(names(d)[1:3], names(d)[grepl("(Mean|StandardDeviation)[X-Z]?$", names(d))])]
+d <- d[c(names(d)[1:2], names(d)[grepl("(Mean|StandardDeviation)[X-Z]?$", names(d))])]
 
-write.csv(d, file = "HumanActivityRecognition.csv")
+write.table(d, file = "HumanActivityRecognition.txt", row.names = F)
 
-# Calculating means of each variable by Subject, Subset and Activity
-#   grouping by Subset does not break the data in more groups since subjects
-#   do not belong to more than 1 subset.
-means <- group_by(d, Subject, Subset, Activity) %>%
+# Calculating means of each variable by Subject and Activity
+means <- group_by(d, Subject, Activity) %>%
     summarise_all(mean)
 
-write.csv(means, file = "HumanActivityRecognitionSummary.csv")
+write.table(means, file = "HumanActivityRecognitionSummary.txt", row.names = F)
 
 # Assembling the code book
 # Starting with the header
@@ -110,8 +103,7 @@ v$Description <- sub(pattern = "([X-Z])$", replacement = " in the \\1 axis", v$N
     sub(pattern = "( [a-z]+)([A-Z])", replacement = "\\L\\1 \\2", perl = T) %>%
     sub(pattern = "( [a-z]+)([A-Z])", replacement = "\\L\\1 \\2", perl = T)
 v[1, "Description"] <- "Subject number"
-v[2, "Description"] <- paste0("Raw data subset (", paste(levels(d$Subset), collapse = "/"), ")")
-v[3, "Description"] <- paste0("Physical activity (", paste(levels(d$Activity), collapse = "/"), ")")
+v[2, "Description"] <- paste0("Physical activity (", paste(levels(d$Activity), collapse = "/"), ")")
 
 # Adding the variable description as table to the code book
 cb <- c(cb, paste(names(v), collapse = " | "),
