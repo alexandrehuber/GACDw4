@@ -1,6 +1,6 @@
 require(dplyr)
 require(readr)
-
+require(gdata)
 
 # The read.dataset function reads and assembles the data subset defined by the
 # name argument (which corresponds to the data subset folder and file names) and
@@ -91,14 +91,15 @@ means <- group_by(d, Subject, Subset, Activity) %>%
 write.csv(means, file = "HumanActivityRecognitionSummary.csv")
 
 # Assembling the code book
-header <- c("#Code book",
-            "Please find below the names, types and descriptions of all variables used in the 
-            'HumanActivityRecognition.csv' and 'HumanActivityRecognitionSummary.csv' files",
+# Starting with the header
+cb <- c("#Code book",
+            "Please find below the names, types and descriptions of all variables used in the 'HumanActivityRecognition.csv' and 'HumanActivityRecognitionSummary.csv' files",
             "##Variables")
-cb <- data.frame(names(d), stringsAsFactors = F)
-names(cb) <- c("Name")
-cb$Type <- sapply(d, class)
-cb$Description <- sub(pattern = "([X-Z])$", replacement = " in the \\1 axis", cb$Name) %>%
+# Constructing the table of name, type and description for each variable
+v <- data.frame(names(d), stringsAsFactors = F)
+names(v) <- c("Name")
+v$Type <- sapply(d, class)
+v$Description <- sub(pattern = "([X-Z])$", replacement = " in the \\1 axis", v$Name) %>%
     sub(pattern = "^([^[:blank:]]+)(Mean|StandardDeviation)(.*)$", replacement = "\\2 of \\1\\3") %>%
     sub(pattern = "^StandardDeviation", replacement = "Standard Deviation") %>%
     sub(pattern = "Angle(.+)Gravity", replacement = "angle between \\1 and gravity") %>%
@@ -107,8 +108,14 @@ cb$Description <- sub(pattern = "([X-Z])$", replacement = " in the \\1 axis", cb
     sub(pattern = "( [A-Z][a-z]+)([A-Z])", replacement = "\\L\\1 \\2", perl = T) %>%
     sub(pattern = "( [a-z]+)([A-Z])", replacement = "\\L\\1 \\2", perl = T) %>%
     sub(pattern = "( [a-z]+)([A-Z])", replacement = "\\L\\1 \\2", perl = T)
-cb[1, "Description"] <- "Subject number"
-cb[2, "Description"] <- paste0("Raw data subset (", paste(levels(d$Subset), collapse = "/"), ")")
-cb[3, "Description"] <- paste0("Physical activity (", paste(levels(d$Activity), collapse = "/"), ")")
-write(header, file = "CodeBook.md")
-write(cb, file = "CodeBook.md", append = T)
+v[1, "Description"] <- "Subject number"
+v[2, "Description"] <- paste0("Raw data subset (", paste(levels(d$Subset), collapse = "/"), ")")
+v[3, "Description"] <- paste0("Physical activity (", paste(levels(d$Activity), collapse = "/"), ")")
+
+# Adding the variable description as table to the code book
+cb <- c(cb, paste(names(v), collapse = " | "),
+        " - | - | - ",
+        paste(v$Name, v$Type, v$Description, sep = " | "))
+
+# Writing the code book to CodeBook.md
+write(cb, file = "CodeBook.md")
