@@ -102,7 +102,7 @@ v$Type <- sapply(d, class) %>%
     sub(pattern = "^(.)", replacement = "\\U\\1", perl = T)
 v$Description <- sub(pattern = "([X-Z])$", replacement = " in the \\1 axis", v$Name) %>%
     sub(pattern = "^([^[:blank:]]+)(Mean|StandardDeviation)(.*)$", replacement = "\\2 of \\1\\3") %>%
-    sub(pattern = "^StandardDeviation", replacement = "Standard Deviation") %>%
+    sub(pattern = "^StandardDeviation", replacement = "Standard deviation") %>%
     sub(pattern = "Angle(.+)Gravity", replacement = "angle between \\1 and gravity") %>%
     sub(pattern = " Time", replacement = " time-wise ") %>%
     sub(pattern = " Frequency", replacement = " the fast Fourier transform of the ") %>%
