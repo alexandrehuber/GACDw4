@@ -51,6 +51,7 @@ features <- features$V2 %>%
     sub(pattern = "\\b([a-z])", replacement = "\\U\\1", perl = T) %>%
     sub(pattern = "[,-]([a-z])", replacement = "\\U\\1", perl = T) %>%
     sub(pattern = "Gyro", replacement = "Gyroscope") %>%
+    sub(pattern = "BodyBody", replacement = "Body") %>%
     sub(pattern = "Mag", replacement = "Magnitude") %>%
     sub(pattern = "Mad", replacement = "MeanAbsoluteDeviation") %>%
     sub(pattern = "Acc", replacement = "Acceleration") %>%
@@ -88,3 +89,26 @@ means <- group_by(d, Subject, Subset, Activity) %>%
     summarise_all(mean)
 
 write.csv(means, file = "HumanActivityRecognitionSummary.csv")
+
+# Assembling the code book
+header <- c("#Code book",
+            "Please find below the names, types and descriptions of all variables used in the 
+            'HumanActivityRecognition.csv' and 'HumanActivityRecognitionSummary.csv' files",
+            "##Variables")
+cb <- data.frame(names(d), stringsAsFactors = F)
+names(cb) <- c("Name")
+cb$Type <- sapply(d, class)
+cb$Description <- sub(pattern = "([X-Z])$", replacement = " in the \\1 axis", cb$Name) %>%
+    sub(pattern = "^([^[:blank:]]+)(Mean|StandardDeviation)(.*)$", replacement = "\\2 of \\1\\3") %>%
+    sub(pattern = "^StandardDeviation", replacement = "Standard Deviation") %>%
+    sub(pattern = "Angle(.+)Gravity", replacement = "angle between \\1 and gravity") %>%
+    sub(pattern = " Time", replacement = " time-wise ") %>%
+    sub(pattern = " Frequency", replacement = " the fast Fourier transform of the ") %>%
+    sub(pattern = "( [A-Z][a-z]+)([A-Z])", replacement = "\\L\\1 \\2", perl = T) %>%
+    sub(pattern = "( [a-z]+)([A-Z])", replacement = "\\L\\1 \\2", perl = T) %>%
+    sub(pattern = "( [a-z]+)([A-Z])", replacement = "\\L\\1 \\2", perl = T)
+cb[1, "Description"] <- "Subject number"
+cb[2, "Description"] <- paste0("Raw data subset (", paste(levels(d$Subset), collapse = "/"), ")")
+cb[3, "Description"] <- paste0("Physical activity (", paste(levels(d$Activity), collapse = "/"), ")")
+write(header, file = "CodeBook.md")
+write(cb, file = "CodeBook.md", append = T)
