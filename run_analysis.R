@@ -98,7 +98,8 @@ cb <- c("#Code book",
 # Constructing the table of name, type and description for each variable
 v <- data.frame(names(d), stringsAsFactors = F)
 names(v) <- c("Name")
-v$Type <- sapply(d, class)
+v$Type <- sapply(d, class) %>%
+    sub(pattern = "^(.)", replacement = "\\U\\1", perl = T)
 v$Description <- sub(pattern = "([X-Z])$", replacement = " in the \\1 axis", v$Name) %>%
     sub(pattern = "^([^[:blank:]]+)(Mean|StandardDeviation)(.*)$", replacement = "\\2 of \\1\\3") %>%
     sub(pattern = "^StandardDeviation", replacement = "Standard Deviation") %>%
