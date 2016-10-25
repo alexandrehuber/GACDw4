@@ -2,7 +2,7 @@
 Please find below the names, types and descriptions of all variables used in the 'HumanActivityRecognition.csv' and 'HumanActivityRecognitionSummary.csv' files
 ##Variables
 Name | Type | Description
- - | - | - 
+--- | --- | --- 
 Subject | factor | Subject number
 Subset | factor | Raw data subset (Test/Train)
 Activity | factor | Physical activity (Laying/Sitting/Standing/Walking/Walking downstairs/Walking upstairs)

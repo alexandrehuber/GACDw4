@@ -114,7 +114,7 @@ v[3, "Description"] <- paste0("Physical activity (", paste(levels(d$Activity), c
 
 # Adding the variable description as table to the code book
 cb <- c(cb, paste(names(v), collapse = " | "),
-        " - | - | - ",
+        "--- | --- | --- ",
         paste(v$Name, v$Type, v$Description, sep = " | "))
 
 # Writing the code book to CodeBook.md
